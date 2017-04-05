@@ -14,7 +14,7 @@
     ctx.font = '40px serif';
     ctx.fillStyle = "#FF0000";
 
-    var ws = new WebSocket("ws://localhost:8080");
+    var ws = new WebSocket("ws://webcam-pi.azurewebsites.net");
     ws.onopen = () =>
     {
         console.log("websocket connected");
