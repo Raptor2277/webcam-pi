@@ -1,0 +1,41 @@
+<canvas id="canvas" width="500" height="500">
+
+</canvas>
+
+<script>
+    
+    if (!"WebSocket" in window) {
+        alert("Your browser doesn't support websockets");
+        throw new Error("Your browser doesn't support websockets")
+    }
+
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext('2d');
+    ctx.font = '40px serif';
+    ctx.fillStyle = "#FF0000";
+
+    var ws = new WebSocket("ws://localhost:8080");
+    ws.onopen = () =>
+    {
+        console.log("websocket connected");
+        ws.send('begin');
+    };
+
+    ws.onclose = (close) =>
+    {
+        console.log(close);
+    };
+
+    ws.onerror = (error) =>
+    {
+        console.log(error)
+    };
+
+    ws.onmessage = (evt) =>
+    {
+        var img = new Image();
+        img.src = evt.data;
+        ctx.drawImage(img, 0,0);
+    };
+
+</script>
