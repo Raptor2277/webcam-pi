@@ -5,6 +5,8 @@
  */
 
 var img = "";
+var piSocket = null;
+var clients = 0;
 
 var app = require('../app');
 var debug = require('debug')('webcam-pi:server');
@@ -29,15 +31,23 @@ var server = http.createServer(app);
 var ws = require('ws');
 var wss = new ws.Server({ server });
 
-wss.on('connection', (ws) => {
+setInterval(function () {
+  console.log(clients);
+}, 1000);
 
+wss.on("error", (error) =>{
+  console.log("WSS error: " + error);
+});
+
+wss.on('connection', (ws) => {
+  clients++;
   ws.on('message', (msg) => {
-    
+
     var obj = null;
     try {
       obj = JSON.parse(msg);
     } catch (error) {
-      
+
     }
 
     if (msg == 'begin') {
@@ -48,13 +58,19 @@ wss.on('connection', (ws) => {
           clearInterval(pointer);
         }
       }, 1000 / 30);
-    } 
-    else if(obj.key == 'maruchan')
-    {
+    }
+    else if (obj.key == 'maruchan') {
       img = obj.image;
     }
   });
 
+  ws.on('close', (code, message) => {
+    clients--;
+  });
+
+  ws.on("error", (error) => {
+    console.log("WS error: " + error);
+  });
 });
 
 
